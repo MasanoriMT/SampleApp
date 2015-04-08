@@ -7,6 +7,12 @@
 //
 
 #import "AppDelegate.h"
+#import <Fabric/Fabric.h>
+#import <Crashlytics/Crashlytics.h>
+
+
+#import "MyURLCache.h"
+
 
 @interface AppDelegate ()
 
@@ -17,6 +23,14 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+
+#ifdef USE_FABRIC
+    NSLog(@"Fabric!!!");
+    [Fabric with:@[CrashlyticsKit]];
+#endif
+    
+    [NSURLCache setSharedURLCache:[MyURLCache new]];
+    
     return YES;
 }
 
@@ -28,6 +42,11 @@
 - (void)applicationDidEnterBackground:(UIApplication *)application {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+    if ([[NSURLCache sharedURLCache] isKindOfClass:[MyURLCache class]]) {
+        NSLog(@"ok!!!");
+    }
+    NSLog(@"cache clear!!!");
+    [[NSURLCache sharedURLCache] removeAllCachedResponses];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
